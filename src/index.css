@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --paper: #fbf6e9;
+  --ink: #101223;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: #0a0b1a;
+  color: var(--paper);
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Hide the native cursor on capable pointers; a doodle cursor takes over. */
+@media (hover: hover) and (pointer: fine) {
+  body.doodle-cursor,
+  body.doodle-cursor * {
+    cursor: none;
+  }
+}
+
+::selection {
+  background: #ffd43b;
+  color: #101223;
+}
+
+/* Deep-space graph-paper backdrop for the whole page */
+.starnote-bg {
+  background-color: #0a0b1a;
+  background-image:
+    linear-gradient(rgba(116, 192, 252, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(116, 192, 252, 0.05) 1px, transparent 1px),
+    radial-gradient(circle at 20% 15%, rgba(177, 151, 252, 0.16), transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(92, 225, 230, 0.12), transparent 45%);
+  background-size: 34px 34px, 34px 34px, 100% 100%, 100% 100%;
+}
+
+/* A cream "sketchbook page" surface */
+.sketch-page {
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(rgba(16, 18, 35, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 18, 35, 0.06) 1px, transparent 1px);
+  background-size: 26px 26px;
+  color: #23263a;
+}
+
+/* Waxy crayon edge for headings + strokes */
+.crayon {
+  filter: url(#crayon-rough);
+}
+.crayon-soft {
+  filter: url(#crayon-soft);
+}
+
+/* Marker text-shadow so hand-lettering pops off dark space */
+.marker-glow {
+  text-shadow: 0 2px 0 rgba(16, 18, 35, 0.25), 0 0 22px rgba(255, 212, 59, 0.15);
+}
+
+/* Dashed doodle underline that we animate in */
+.sketch-link {
+  position: relative;
+  text-decoration: none;
+}
+.sketch-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.28s ease;
+  border-radius: 2px;
+}
+.sketch-link:hover::after {
+  transform: scaleX(1);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0b1a;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2f5e;
+  border-radius: 20px;
+  border: 3px solid #0a0b1a;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #b197fc;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Utility: chunky sketch card border via layered box-shadow (hand-drawn feel) */
+.doodle-card {
+  border: 2.5px solid #101223;
+  border-radius: 16px 22px 18px 24px / 22px 16px 26px 18px;
+  box-shadow: 6px 7px 0 rgba(16, 18, 35, 0.85);
+}
+.doodle-card-light {
+  border: 2.5px solid #101223;
+  border-radius: 18px 24px 16px 22px / 20px 18px 24px 16px;
+  box-shadow: 5px 6px 0 rgba(16, 18, 35, 0.28);
+}

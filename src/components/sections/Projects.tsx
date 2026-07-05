@@ -42,6 +42,7 @@ function QuestCard({ project, index }: { project: Project; index: number }) {
   return (
     <motion.article
       whileHover={{ y: -6, rotate: 0 }}
+      data-sfx="quest"
       style={{ rotate: tilt, borderColor: '#101223' }}
       className="doodle-card group relative flex h-full flex-col overflow-hidden bg-nebula p-6"
     >

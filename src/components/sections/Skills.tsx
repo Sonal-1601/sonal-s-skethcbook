@@ -44,6 +44,7 @@ export default function Skills() {
                 {skills.slice(0, 9).map((s, i) => (
                   <div
                     key={s.name}
+                    data-sfx="inventory"
                     className="grid h-9 w-9 place-items-center sm:h-12 sm:w-12"
                     style={{
                       background: '#8b8b8b',
@@ -81,6 +82,7 @@ function InventorySlot({ skill }: { skill: Skill }) {
     <motion.div
       whileHover={{ y: -5, rotate: -1 }}
       data-cursor="grab"
+      data-sfx="inventory"
       className="group relative select-none rounded-lg p-3"
       style={{
         background: '#2c3150',

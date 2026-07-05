@@ -34,6 +34,7 @@ export default function FunFacts() {
                 whileHover={{ rotate: 0, y: -6, scale: 1.02 }}
                 viewport={{ once: true, margin: '-60px' }}
                 transition={{ duration: 0.45, delay: (i % 3) * 0.06 }}
+                data-sfx="note"
                 className="relative p-5 pt-7"
                 style={{
                   background: NOTE_COLORS[i % NOTE_COLORS.length],

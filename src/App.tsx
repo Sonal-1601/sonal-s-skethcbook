@@ -1,6 +1,7 @@
 import SvgDefs from './components/SvgDefs'
 import Starfield from './components/Starfield'
 import Cursor from './components/Cursor'
+import SoundControl from './components/SoundControl'
 import Nav from './components/Nav'
 import Hero from './components/sections/Hero'
 import About from './components/sections/About'
@@ -15,6 +16,7 @@ export default function App() {
       <SvgDefs />
       <Starfield />
       <Cursor />
+      <SoundControl />
       <Nav />
 
       <main className="relative">

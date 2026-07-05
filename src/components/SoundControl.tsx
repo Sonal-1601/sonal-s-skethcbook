@@ -60,14 +60,32 @@ export default function SoundControl() {
       }
       window.addEventListener('pointerdown', resume, { once: true })
     }
-    // show the "turn on sound" nudge briefly for first-timers
-    if (!savedSfx && !savedMusic && !localStorage.getItem('sonal.sound.seen')) {
-      const t1 = setTimeout(() => setHint(true), 1600)
-      const t2 = setTimeout(() => setHint(false), 11000)
-      return () => {
-        clearTimeout(t1)
-        clearTimeout(t2)
+    // Sync when another part of the app (e.g. the hero "Press Start") boots audio.
+    const onChange = (e: Event) => {
+      const d = (e as CustomEvent<{ sfx?: boolean; music?: boolean }>).detail
+      if (d?.sfx !== undefined) {
+        setSfxOn(d.sfx)
+        localStorage.setItem(LS_SFX, d.sfx ? '1' : '0')
       }
+      if (d?.music !== undefined) {
+        setMusicOn(d.music)
+        localStorage.setItem(LS_MUSIC, d.music ? '1' : '0')
+      }
+      setHint(false)
+    }
+    window.addEventListener('sonal:soundchange', onChange as EventListener)
+
+    // show the "turn on sound" nudge briefly for first-timers
+    let t1: number | undefined
+    let t2: number | undefined
+    if (!savedSfx && !savedMusic && !localStorage.getItem('sonal.sound.seen')) {
+      t1 = window.setTimeout(() => setHint(true), 1600)
+      t2 = window.setTimeout(() => setHint(false), 11000)
+    }
+    return () => {
+      window.removeEventListener('sonal:soundchange', onChange as EventListener)
+      if (t1) clearTimeout(t1)
+      if (t2) clearTimeout(t2)
     }
   }, [])
 

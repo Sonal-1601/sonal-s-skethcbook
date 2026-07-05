@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { profile } from '../../data/portfolio'
 import { Planet, Star5, Sparkle, Creeper, Lightsaber, Vessel, Comet, Rocket } from '../Doodles'
+import { sound } from '../../audio/engine'
+import { confettiBurst } from '../../lib/confetti'
 
 /* Tiny typewriter for the rotating roles */
 function useTypewriter(words: string[], speed = 90, pause = 1400) {
@@ -63,6 +65,22 @@ function Astronaut({ className = '' }: { className?: string }) {
 export default function Hero() {
   const roleText = useTypewriter(profile.roles)
   const sceneRef = useRef<HTMLDivElement>(null)
+  const [started, setStarted] = useState(false)
+
+  // "Press Start" = boot the whole experience: turn on sound + music, play the
+  // arcade jingle, confetti, flash GAME START, then dive into the story.
+  const startGame = (e: React.MouseEvent<HTMLButtonElement>) => {
+    sound.unlock()
+    sound.setMuted(false)
+    sound.startMusic()
+    sound.startJingle()
+    window.dispatchEvent(new CustomEvent('sonal:soundchange', { detail: { sfx: true, music: true } }))
+    const r = e.currentTarget.getBoundingClientRect()
+    confettiBurst(r.left + r.width / 2, r.top + r.height / 2, 42)
+    setStarted(true)
+    window.setTimeout(() => setStarted(false), 1300)
+    window.setTimeout(() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }), 720)
+  }
 
   // Mouse parallax for the floating scene
   const mx = useMotionValue(0)
@@ -94,12 +112,20 @@ export default function Hero() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="mb-5 inline-flex items-center gap-2"
+            className="mb-5 inline-flex items-center gap-3"
           >
-            <span className="font-pixel text-[10px] text-ink" style={{ background: '#63e6be', padding: '7px 10px', borderRadius: 5, boxShadow: '2px 2px 0 #101223' }}>
+            <motion.button
+              onClick={startGame}
+              whileTap={{ scale: 0.92 }}
+              animate={started ? { scale: 1 } : { scale: [1, 1.06, 1] }}
+              transition={started ? { duration: 0.2 } : { duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+              aria-label="Press start to begin the experience with sound and music"
+              className="font-pixel text-[10px] text-ink"
+              style={{ background: '#63e6be', padding: '9px 12px', borderRadius: 5, boxShadow: '2px 2px 0 #101223' }}
+            >
               ▶ PRESS START
-            </span>
-            <span className="font-hand text-lg text-mint">player 1 has entered</span>
+            </motion.button>
+            <span className="font-hand text-lg text-mint">{started ? 'game on! ♪' : '◄ turns on sound + story'}</span>
           </motion.div>
 
           <motion.h1
@@ -193,6 +219,28 @@ export default function Hero() {
           </motion.div>
         </div>
       </div>
+
+      {/* GAME START flash */}
+      <AnimatePresence>
+        {started && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="pointer-events-none fixed inset-0 z-[90] grid place-items-center"
+          >
+            <motion.div
+              initial={{ scale: 0.4, rotate: -8, y: 12 }}
+              animate={{ scale: [0.4, 1.12, 1], rotate: [-8, 3, -2] }}
+              transition={{ duration: 0.55, ease: 'easeOut' }}
+              className="crayon font-pixel text-2xl text-gold sm:text-4xl"
+              style={{ textShadow: '3px 3px 0 #101223, 0 0 26px rgba(255,212,59,.55)' }}
+            >
+              GAME&nbsp;START!
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* scroll hint */}
       <motion.a

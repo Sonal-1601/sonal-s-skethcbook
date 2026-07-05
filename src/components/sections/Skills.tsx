@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { skills, type Skill } from '../../data/portfolio'
 import { SectionHeading, Reveal } from '../ui'
 import { Creeper } from '../Doodles'
+import { PixelIcon } from '../PixelIcons'
 
 const KIND_COLOR: Record<Skill['kind'], string> = {
   lang: '#ffd43b',
@@ -45,16 +46,14 @@ export default function Skills() {
                   <div
                     key={s.name}
                     data-sfx="inventory"
-                    className="grid h-9 w-9 place-items-center sm:h-12 sm:w-12"
+                    className="grid h-9 w-9 place-items-center p-1 sm:h-12 sm:w-12 sm:p-1.5"
                     style={{
                       background: '#8b8b8b',
                       boxShadow: `inset 2px 2px 0 #373737, inset -2px -2px 0 #ffffff55${i === 0 ? ', 0 0 0 2px #fff' : ''}`,
                     }}
                     title={s.name}
                   >
-                    <span className="font-pixel text-[10px] sm:text-[11px]" style={{ color: KIND_COLOR[s.kind] }}>
-                      {s.name[0]}
-                    </span>
+                    <PixelIcon name={s.name} className="h-full w-full" />
                   </div>
                 ))}
               </div>
@@ -92,10 +91,13 @@ function InventorySlot({ skill }: { skill: Skill }) {
     >
       <div className="mb-2 flex items-start justify-between">
         <div
-          className="grid h-11 w-11 place-items-center rounded-md font-pixel text-sm text-ink"
-          style={{ background: color, boxShadow: 'inset 2px 2px 0 rgba(255,255,255,.5), inset -2px -2px 0 rgba(0,0,0,.25)' }}
+          className="grid h-11 w-11 place-items-center overflow-hidden rounded-md p-1.5"
+          style={{
+            background: '#12152b',
+            boxShadow: `inset 2px 2px 0 rgba(0,0,0,.45), inset -2px -2px 0 rgba(255,255,255,.06), 0 0 0 1.5px ${color}55`,
+          }}
         >
-          {skill.name.slice(0, 2)}
+          <PixelIcon name={skill.name} className="h-full w-full" />
         </div>
         <span className="font-pixel text-[7px] text-paper/40">{KIND_LABEL[skill.kind]}</span>
       </div>

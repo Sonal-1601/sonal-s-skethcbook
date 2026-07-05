@@ -139,6 +139,17 @@ class AudioEngine {
     window.setTimeout(() => this.blip(1174, 0.16, 'triangle', 0.05), 90)
   }
 
+  /** "GAME START!" rising arcade jingle (plays through sfxGain once unmuted) */
+  startJingle() {
+    if (!this.ctx) return
+    const notes = [523.25, 659.25, 783.99, 1046.5] // C E G C
+    notes.forEach((f, i) => window.setTimeout(() => this.blip(f, 0.16, 'square', 0.09), i * 95))
+    window.setTimeout(() => {
+      this.blip(1318.51, 0.32, 'triangle', 0.08) // sparkle finish
+      this.noiseClick(3200, 0.2, 0.02)
+    }, 4 * 95)
+  }
+
   // ── Mute / volume ───────────────────────────────────────
   setMuted(m: boolean) {
     this.muted = m

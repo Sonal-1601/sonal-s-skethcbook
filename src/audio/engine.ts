@@ -150,6 +150,20 @@ class AudioEngine {
     }, 4 * 95)
   }
 
+  /** lightsaber swish */
+  saberSwing() {
+    if (!this.ctx || this.muted) return
+    this.noiseClick(1500, 0.1, 0.04)
+    this.blip(320, 0.09, 'sawtooth', 0.03, 840)
+  }
+
+  /** bug squash splat */
+  squash() {
+    if (!this.ctx || this.muted) return
+    this.noiseClick(520, 0.13, 0.13)
+    this.blip(200, 0.12, 'square', 0.08, 70)
+  }
+
   // ── Mute / volume ───────────────────────────────────────
   setMuted(m: boolean) {
     this.muted = m

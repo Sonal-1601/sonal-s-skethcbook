@@ -5,6 +5,7 @@ import { Rocket } from './Doodles'
 const LINKS = [
   { href: '#about', label: 'Story' },
   { href: '#skills', label: 'Inventory' },
+  { href: '#commits', label: 'Commits' },
   { href: '#projects', label: 'Quests' },
   { href: '#fun', label: 'Side Quests' },
   { href: '#contact', label: 'Say Hi' },

@@ -1,7 +1,9 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { socials, profile } from '../../data/portfolio'
 import { ScribbleUnderline, LevelChip } from '../ui'
 import { Rocket, Heart, Star5 } from '../Doodles'
+import BugArena from '../BugArena'
 import type { ComponentType } from 'react'
 
 /* Brand glyphs (kept simple + sketch-friendly) */
@@ -36,6 +38,7 @@ const LINKS: Social[] = [
 ]
 
 export default function Contact() {
+  const [gameOpen, setGameOpen] = useState(false)
   return (
     <section id="contact" className="relative z-10 overflow-hidden px-5 py-24">
       <div className="mx-auto max-w-4xl text-center">
@@ -61,7 +64,7 @@ export default function Contact() {
 
         <p className="mx-auto mt-5 max-w-lg font-hand text-xl text-paper/75">
           Got a cool idea, a game, a wild side project, or just want to talk space and doodles?
-          My inbox is always open. ✨
+          My inbox is always open. :D ✨
         </p>
 
         {/* social buttons */}
@@ -100,16 +103,31 @@ export default function Contact() {
         </motion.div>
       </div>
 
-      {/* launching rocket */}
+      {/* launching rocket — click to enter the Debug Arena mini-game */}
       <motion.div
         initial={{ y: 60, opacity: 0 }}
         whileInView={{ y: 0, opacity: 1 }}
         viewport={{ once: true }}
-        className="pointer-events-none mx-auto mt-6 w-fit"
+        className="mx-auto mt-6 flex w-fit flex-col items-center gap-1"
       >
-        <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 3, repeat: Infinity }} className="text-gold">
-          <Rocket className="h-14 w-14" />
-        </motion.div>
+        <motion.button
+          onClick={() => setGameOpen(true)}
+          whileHover={{ scale: 1.12, rotate: -6 }}
+          whileTap={{ scale: 0.9 }}
+          animate={{ y: [0, -10, 0] }}
+          transition={{ y: { duration: 3, repeat: Infinity } }}
+          className="text-gold"
+          aria-label="Launch the Debug Arena bug-slaying mini-game"
+        >
+          <Rocket className="h-14 w-14 drop-shadow-[0_0_12px_rgba(255,212,59,0.5)]" />
+        </motion.button>
+        <motion.span
+          animate={{ opacity: [0.4, 1, 0.4] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="font-pixel text-[8px] text-gold"
+        >
+          ▲ CLICK TO BATTLE THE BUGS ⚔️
+        </motion.span>
       </motion.div>
 
       {/* footer */}
@@ -121,6 +139,8 @@ export default function Contact() {
         </div>
         <div className="font-hand text-sm text-paper/45">© 2026 · made with React, crayons &amp; a lot of stardust</div>
       </footer>
+
+      <BugArena open={gameOpen} onClose={() => setGameOpen(false)} />
     </section>
   )
 }

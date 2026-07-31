@@ -32,6 +32,90 @@ export const about = {
   },
 }
 
+// ── The polaroid stack in the About section ──────────────────
+//  Each entry is one photo in the frame. Everything works with zero
+//  images: without `img` we draw a doodle scene from `lines` + `doodles`.
+//  ✏️ To use a real photo, drop it in `public/photos/` and set
+//     img: '/photos/whatever.jpg' — the doodle scene steps aside.
+export type AboutDoodle =
+  | 'planet' | 'star' | 'pencil' | 'rocket' | 'moon' | 'comet'
+  | 'controller' | 'creeper' | 'lightsaber' | 'boot' | 'cloud'
+  | 'spark' | 'sparkle' | 'heart' | 'ufo' | 'vessel' | 'globe'
+
+export type AboutSlide = {
+  id: string
+  /** optional real photo — e.g. '/photos/me.jpg' */
+  img?: string
+  /** alt text, required whenever `img` is set */
+  alt?: string
+  /** CSS object-position for the photo crop, e.g. 'center 30%'. Tall phone
+   *  shots get cropped top+bottom by the 4:5 frame — nudge this to keep the
+   *  face in view. Ignored when there's no `img`. */
+  focus?: string
+  /** three stacked lines of hand-lettering (ignored when `img` is set) */
+  lines?: [string, string, string]
+  /** handwritten caption under the frame */
+  caption: string
+  /** colour of the middle, emphasised line (also tints the active dot) */
+  accent: string
+  /** doodles scattered into the four corner slots (ignored when `img` is set) */
+  doodles: AboutDoodle[]
+}
+
+export const aboutSlides: AboutSlide[] = [
+  {
+    id: 'me',
+    img: '/photos/sonal.jpg',
+    alt: 'Sonal in sunglasses and a lilac sweatshirt, sitting outdoors throwing shakas',
+    focus: 'center 22%',
+    caption: "— that's me, Sonal —",
+    accent: '#ffd43b',
+    doodles: [],
+  },
+  {
+    id: 'doodling',
+    lines: ['creating &', 'doodling', 'since forever ✏️'],
+    caption: '— my default state —',
+    accent: '#ffd43b',
+    doodles: ['planet', 'star', 'pencil'],
+  },
+  {
+    id: 'flutter',
+    lines: ['building apps', 'in Flutter', 'that feel good 📱'],
+    caption: '— my weapon of choice —',
+    accent: '#5ce1e6',
+    doodles: ['vessel', 'sparkle', 'spark'],
+  },
+  {
+    id: 'blue-zombie',
+    lines: ['made a game', 'Blue Zombie', 'just for the love of it'],
+    caption: '— boss fight cleared —',
+    accent: '#63e6be',
+    doodles: ['controller', 'creeper', 'heart'],
+  },
+  {
+    id: 'space',
+    lines: ['endlessly nerdy', 'about space', 'rockets & the void 🚀'],
+    caption: '— side quest: orbit —',
+    accent: '#b197fc',
+    doodles: ['moon', 'rocket', 'comet', 'ufo'],
+  },
+  {
+    id: 'outdoors',
+    lines: ['best ideas', 'happen uphill', 'trails > treadmills 🥾'],
+    caption: '— touching grass, occasionally —',
+    accent: '#ffa94d',
+    doodles: ['cloud', 'globe', 'boot'],
+  },
+  {
+    id: 'gaming',
+    lines: ['Minecraft builds,', 'Hollow Knight', 'Star Wars everything ⚔️'],
+    caption: '— respawning since forever —',
+    accent: '#ff6b6b',
+    doodles: ['creeper', 'star', 'lightsaber'],
+  },
+]
+
 export type Project = {
   title: string
   blurb: string

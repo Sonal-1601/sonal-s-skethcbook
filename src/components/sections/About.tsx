@@ -1,9 +1,10 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { RoughNotation, RoughNotationGroup } from 'react-rough-notation'
-import { about } from '../../data/portfolio'
+import { about, aboutSlides } from '../../data/portfolio'
 import { LevelChip, ScribbleUnderline } from '../ui'
-import { Pencil, Heart, Planet, Star5 } from '../Doodles'
+import { Heart } from '../Doodles'
+import PolaroidStack from '../PolaroidStack'
 
 export default function About() {
   const ref = useRef<HTMLDivElement>(null)
@@ -18,7 +19,7 @@ export default function About() {
       <div ref={ref} className="mx-auto max-w-5xl">
         <LevelChip n="01" label="The Origin Story" color="#7048e8" />
         <div className="grid grid-cols-1 gap-12 md:grid-cols-[0.9fr_1.1fr] md:items-start">
-          {/* Left: doodle "about me" polaroid */}
+          {/* Left: a flip-through stack of polaroids */}
           <motion.div
             initial={{ opacity: 0, x: -20, rotate: -4 }}
             whileInView={{ opacity: 1, x: 0, rotate: -3 }}
@@ -26,20 +27,7 @@ export default function About() {
             transition={{ duration: 0.55 }}
             className="mx-auto w-full max-w-xs"
           >
-            <div className="doodle-card-light bg-white p-4">
-              <div className="relative grid aspect-[4/5] place-items-center overflow-hidden rounded-lg bg-gradient-to-b from-nebula to-space">
-                {/* mini scene */}
-                <Planet className="absolute -right-6 -top-4 h-24 w-24 text-grape" />
-                <Star5 className="absolute left-4 top-6 h-6 w-6 text-gold" />
-                <div className="text-center">
-                  <div className="font-marker text-3xl text-paper">creating &amp;</div>
-                  <div className="font-marker text-4xl font-bold text-gold">doodling</div>
-                  <div className="mt-1 font-hand text-lg text-saber">since forever ✏️</div>
-                </div>
-                <Pencil className="absolute bottom-4 right-6 h-9 w-9 text-tangerine" />
-              </div>
-              <div className="mt-3 text-center font-marker text-2xl text-ink">— that's me, Sonal —</div>
-            </div>
+            <PolaroidStack slides={aboutSlides} />
           </motion.div>
 
           {/* Right: the story with marker highlights */}

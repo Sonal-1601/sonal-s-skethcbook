@@ -6,6 +6,8 @@
   "description": "Sonal Pandey — a hand-drawn, game-inspired space sketchbook portfolio",
   "scripts": {
     "dev": "vite",
+    "fetch:forest": "node scripts/fetch-forest.mjs",
+    "prebuild": "node scripts/fetch-forest.mjs",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },

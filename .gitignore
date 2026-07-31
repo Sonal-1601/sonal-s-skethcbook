@@ -5,6 +5,11 @@ dist-ssr
 .DS_Store
 .vite
 
+# local secrets + `fetch:forest --probe` output
+.env
+.env.local
+scratch/
+
 # editor
 .vscode/*
 !.vscode/extensions.json

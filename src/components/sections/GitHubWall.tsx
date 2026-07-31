@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { SectionHeading, Reveal } from '../ui'
+import { Sprite } from '../PixelSprite'
 
 const USER = 'Sonal-1601'
 const PROFILE = 'https://github.com/Sonal-1601'
@@ -10,17 +11,6 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 
 type Day = { date: string; count: number; level: number }
 type Stats = { total: number; longest: number; current: number; best: number }
-
-// ── pixel sprite renderer ──
-function Sprite({ rows, palette, className }: { rows: string[]; palette: Record<string, string>; className?: string }) {
-  const w = rows[0].length
-  const h = rows.length
-  return (
-    <svg viewBox={`0 0 ${w} ${h}`} className={className} shapeRendering="crispEdges" style={{ imageRendering: 'pixelated' }} aria-hidden="true">
-      {rows.map((r, y) => r.split('').map((ch, x) => (ch === '.' ? null : <rect key={`${x}_${y}`} x={x} y={y} width={1.04} height={1.04} fill={palette[ch]} />)))}
-    </svg>
-  )
-}
 
 const SONAL_ROWS = [
   '...KKKKKK...',

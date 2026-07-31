@@ -53,6 +53,45 @@ Want to tweak the look? The design tokens (colors, fonts, animations) are in
 [`tailwind.config.js`](tailwind.config.js); the crayon SVG filters are in
 [`src/components/SvgDefs.tsx`](src/components/SvgDefs.tsx).
 
+## 🌲 The focus forest
+
+The **My Focus Forest** section mirrors real focus data from the
+[Forest](https://www.forestapp.cc/) app — hours focused, trees grown, streaks
+and what the time went into.
+
+Forest publishes **no public API and no data export**, and its internal API
+sends **no CORS headers**, so the browser can't call it the way the commit wall
+calls GitHub. On top of that, `remember_token` is a long-lived, *write-capable*
+account credential — anything in a Vite bundle is public, so it can never ship
+to the client.
+
+So the data is snapshotted at **build time** instead:
+
+```bash
+FOREST_REMEMBER_TOKEN=xxx npm run fetch:forest
+```
+
+That writes [`src/data/forest.generated.ts`](src/data/forest.generated.ts),
+which the site imports as plain static data. `npm run build` runs it
+automatically via `prebuild`.
+
+**Getting your token** — install the official
+[Forest Chrome extension](https://chromewebstore.google.com/detail/kjacjjdnoddnpbbcjilcajfhhbdhkpgk),
+sign in, open DevTools → Network, plant a tree, find the request to
+`c88fef96.forestapp.cc/api/v1/plants` and copy the `remember_token` cookie.
+Keep it out of git — it's an account credential.
+
+**Keeping it fresh** — [`.github/workflows/refresh-forest.yml`](.github/workflows/refresh-forest.yml)
+re-snapshots daily and commits the result. Add `FOREST_REMEMBER_TOKEN` as a
+repository secret to switch it on.
+
+> ⚠️ This is an **unofficial** API and can change without notice. Every failure
+> path — no token, dead endpoint, changed response shape, expired session — is
+> non-fatal: the fetch script logs and exits 0, and the section falls back to a
+> deterministic sample forest so the page never breaks. If the shape ever
+> drifts, `npm run fetch:forest -- --probe` dumps the raw responses to
+> `scratch/forest-probe.json` without touching the generated file.
+
 ## 🌍 Deploy
 
 The build is a static site in `dist/` — drop it on any static host.

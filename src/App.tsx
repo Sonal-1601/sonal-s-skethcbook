@@ -7,6 +7,7 @@ import Hero from './components/sections/Hero'
 import About from './components/sections/About'
 import Skills from './components/sections/Skills'
 import GitHubWall from './components/sections/GitHubWall'
+import ForestWall from './components/sections/ForestWall'
 import Projects from './components/sections/Projects'
 import FunFacts from './components/sections/FunFacts'
 import Contact from './components/sections/Contact'
@@ -25,6 +26,7 @@ export default function App() {
         <About />
         <Skills />
         <GitHubWall />
+        <ForestWall />
         <Projects />
         <FunFacts />
         <Contact />

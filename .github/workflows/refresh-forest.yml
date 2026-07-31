@@ -1,0 +1,43 @@
+# Re-snapshots the Forest focus data once a day and commits it, so the
+# portfolio's forest keeps growing without a manual deploy.
+#
+# Setup: add FOREST_REMEMBER_TOKEN as a repository secret
+#   Settings → Secrets and variables → Actions → New repository secret
+# Without the secret the fetch script no-ops and nothing is committed.
+
+name: Refresh focus forest
+
+on:
+  schedule:
+    - cron: '17 3 * * *' # 03:17 UTC daily
+  workflow_dispatch: # lets you run it by hand from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Fetch latest forest snapshot
+        env:
+          FOREST_REMEMBER_TOKEN: ${{ secrets.FOREST_REMEMBER_TOKEN }}
+        run: node scripts/fetch-forest.mjs
+
+      - name: Commit if the forest grew
+        run: |
+          if git diff --quiet -- src/data/forest.generated.ts; then
+            echo "no change — forest is the same as yesterday"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/forest.generated.ts
+          git commit -m "chore: refresh focus forest snapshot"
+          git push

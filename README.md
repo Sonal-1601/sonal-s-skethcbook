@@ -92,6 +92,35 @@ repository secret to switch it on.
 > drifts, `npm run fetch:forest -- --probe` dumps the raw responses to
 > `scratch/forest-probe.json` without touching the generated file.
 
+## 🔎 SEO, social cards & AEO
+
+Everything is generated at build time from **one file**:
+[`src/data/site.ts`](src/data/site.ts). Change `url` there and the canonical
+tag, `og:url`, sitemap, robots and `llms.txt` all follow — they can't drift.
+
+| Output | Where it comes from |
+|---|---|
+| `<head>` meta, Open Graph, Twitter card | `index.html` + `__SITE_*__` tokens |
+| JSON-LD (`Person`, `WebSite`, `ProfilePage`, project `ItemList`) | built from the real `projects` / `skills` data |
+| `/robots.txt`, `/sitemap.xml`, `/llms.txt`, `/site.webmanifest` | emitted into `dist/` by the `seo()` plugin |
+| `/og.png`, `/apple-touch-icon.png` | `npm run make:og` (committed, not rebuilt each time) |
+
+**The share card** — [`scripts/og-template.html`](scripts/og-template.html) is a
+normal HTML page rendered to a 1200×630 PNG by headless Chrome. Edit it, run
+`npm run make:og`, done. The URL printed on the card is hardcoded there, so
+update it if the domain changes.
+
+**AEO** — `/llms.txt` gives answer engines a clean, quotable markdown summary
+instead of asking them to scrape a JavaScript app, and `robots.txt` explicitly
+welcomes `GPTBot`, `ClaudeBot`, `PerplexityBot`, `OAI-SearchBot` and friends.
+Flip those to `Disallow` if you'd rather not be quoted.
+
+> ⚠️ This is a **client-rendered** app, so crawlers that don't execute
+> JavaScript see an empty `<div id="root">`. Google renders JS; many AI
+> crawlers don't. The `<noscript>` block in `index.html` and `/llms.txt` cover
+> that gap. If you ever want it airtight, add a prerender step that bakes the
+> rendered HTML into `dist/index.html` at build time.
+
 ## 🌍 Deploy
 
 The build is a static site in `dist/` — drop it on any static host.

@@ -2,13 +2,56 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/rocket.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Core ─────────────────────────────────────────────
+         Every __SITE_*__ token is filled at build time from
+         src/data/site.ts by the seo() plugin in vite.config.ts.
+         Change the URL there, not here. -->
+    <title>__SITE_TITLE__</title>
+    <meta name="description" content="__SITE_DESCRIPTION__" />
+    <link rel="canonical" href="__SITE_URL__/" />
+    <meta name="author" content="Sonal Pandey" />
     <meta
-      name="description"
-      content="Sonal Pandey — software developer, doodler & space explorer. A hand-drawn, game-inspired sketchbook portfolio."
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
     />
-    <title>Sonal Pandey · Dev · Doodler · Space Explorer</title>
+    <meta name="theme-color" content="__SITE_THEME_COLOR__" />
+    <meta name="color-scheme" content="dark" />
+
+    <!-- ── Icons ───────────────────────────────────────────── -->
+    <link rel="icon" type="image/svg+xml" href="/rocket.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- ── Open Graph (Slack, WhatsApp, LinkedIn, iMessage…) ── -->
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content="__SITE_NAME__" />
+    <meta property="og:title" content="__SITE_TITLE__" />
+    <meta property="og:description" content="__SITE_SOCIAL_DESCRIPTION__" />
+    <meta property="og:url" content="__SITE_URL__/" />
+    <meta property="og:image" content="__SITE_OG_IMAGE__" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="__SITE_OG_IMAGE_ALT__" />
+    <meta property="og:locale" content="__SITE_LOCALE__" />
+    <meta property="profile:first_name" content="Sonal" />
+    <meta property="profile:last_name" content="Pandey" />
+    <meta property="profile:username" content="Sonal-1601" />
+
+    <!-- ── X / Twitter ─────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="__SITE_TITLE__" />
+    <meta name="twitter:description" content="__SITE_SOCIAL_DESCRIPTION__" />
+    <meta name="twitter:image" content="__SITE_OG_IMAGE__" />
+    <meta name="twitter:image:alt" content="__SITE_OG_IMAGE_ALT__" />
+
+    <!-- ── Structured data — generated from the real project and
+         skill data, so it can't drift from what's on the page ── -->
+    <script type="application/ld+json">
+      __SEO_JSONLD__
+    </script>
 
     <!-- Hand-drawn + game + clean font pairing -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -20,6 +63,48 @@
   </head>
   <body>
     <div id="root"></div>
+
+    <!-- Real content for crawlers and readers that don't run JS.
+         React only ever touches #root, so this stays put and costs
+         nothing visually to anyone with JS enabled. -->
+    <noscript>
+      <h1>Sonal Pandey — Software Developer, Doodler &amp; Space Explorer</h1>
+      <p>
+        I'm a software developer based in India. My expertise lives in
+        <strong>Flutter &amp; Dart</strong>, building mobile experiences that actually feel good
+        to use. I also ship products with <strong>Node.js</strong> and modern JavaScript
+        frameworks like React, and I'm endlessly curious about space technology and animation.
+      </p>
+      <h2>What I work with</h2>
+      <p>Flutter, Dart, JavaScript, TypeScript, Node.js, React, Firebase, Git, Figma.</p>
+      <h2>Projects</h2>
+      <ul>
+        <li>
+          <strong>Blue Zombie</strong> — a game inspired by Hollow Knight, built purely for the
+          love of it. <a href="https://github.com/Sonal-1601/blue_zombie">Source on GitHub</a>.
+        </li>
+        <li>
+          <strong>Silver By Sakshi</strong> — a polished storefront for a jewellery brand.
+          <a href="https://silver-by-sakshi.web.app/">Visit site</a>.
+        </li>
+        <li>
+          <strong>Artist On Click</strong> — a platform for artists to showcase their work and
+          connect with each other.
+          <a href="https://medium.com/@pandeysonal1601/artist-on-click-1718603b7420">Read more</a>.
+        </li>
+        <li>
+          <strong>Tvaraa Studio</strong> — a creative agency site that helps brands tell their
+          story to the world. <a href="https://tvaraa-studio.web.app/">Visit site</a>.
+        </li>
+      </ul>
+      <h2>Elsewhere</h2>
+      <ul>
+        <li><a href="https://github.com/Sonal-1601">GitHub</a></li>
+        <li><a href="https://www.linkedin.com/in/pandeysonal/">LinkedIn</a></li>
+        <li><a href="https://medium.com/@pandeysonal1601">Medium</a></li>
+      </ul>
+    </noscript>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -13,7 +13,7 @@
 // ─────────────────────────────────────────────────────────────
 
 export const SITE = {
-  url: 'https://sonal-s-skethcbook.vercel.app',
+  url: 'https://sonals-sketchbook.vercel.app',
   name: "Sonal's Sketchbook",
   title: 'Sonal Pandey — Flutter & Software Developer · Doodler · Space Nerd',
   // ~155 chars: what search engines and answer engines quote

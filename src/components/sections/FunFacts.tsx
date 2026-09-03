@@ -1,12 +1,24 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { funFacts } from '../../data/portfolio'
+import { funFacts, type FunFactPhoto } from '../../data/portfolio'
 import { iconMap, type IconName } from '../Doodles'
 import { LevelChip, ScribbleUnderline } from '../ui'
+import PolaroidLightbox, { type Origin } from '../PolaroidLightbox'
 
 const NOTE_COLORS = ['#ffe8a3', '#c3f0e0', '#cfe4ff', '#ffd6d6', '#e6dcff', '#ffe3c2']
 const TILT = [-3, 2, -1.5, 3, -2.5, 1.5]
 
 export default function FunFacts() {
+  const [photo, setPhoto] = useState<FunFactPhoto | null>(null)
+  const [origin, setOrigin] = useState<Origin>(null)
+
+  // Remember where the note was so the polaroid can grow out of it.
+  const openPhoto = (p: FunFactPhoto, el: HTMLElement) => {
+    const r = el.getBoundingClientRect()
+    setOrigin({ x: r.left + r.width / 2, y: r.top + r.height / 2 })
+    setPhoto(p)
+  }
+
   return (
     <section id="fun" className="sketch-page relative z-10 px-5 py-24">
       {/* torn edges */}
@@ -26,16 +38,36 @@ export default function FunFacts() {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {funFacts.map((f, i) => {
             const Icon = iconMap[f.icon as IconName]
+            const tilt = TILT[i % TILT.length]
+            const hasPhoto = Boolean(f.photo)
             return (
               <motion.div
                 key={f.label}
                 initial={{ opacity: 0, y: 24, rotate: 0 }}
-                whileInView={{ opacity: 1, y: 0, rotate: TILT[i % TILT.length] }}
-                whileHover={{ rotate: 0, y: -6, scale: 1.02 }}
+                whileInView={{ opacity: 1, y: 0, rotate: tilt }}
+                // keep the slant on hover — lean into it a touch and lift the
+                // note off the page, rather than straightening it out
+                whileHover={{ rotate: tilt * 1.4, y: -8, scale: 1.03 }}
+                whileTap={hasPhoto ? { scale: 0.98, rotate: tilt } : undefined}
                 viewport={{ once: true, margin: '-60px' }}
                 transition={{ duration: 0.45, delay: (i % 3) * 0.06 }}
                 data-sfx="note"
-                className="relative p-5 pt-7"
+                data-cursor={hasPhoto ? 'pointer' : undefined}
+                role={hasPhoto ? 'button' : undefined}
+                tabIndex={hasPhoto ? 0 : undefined}
+                aria-label={hasPhoto ? `${f.label} — open photo` : undefined}
+                onClick={hasPhoto ? (e) => openPhoto(f.photo!, e.currentTarget) : undefined}
+                onKeyDown={
+                  hasPhoto
+                    ? (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          openPhoto(f.photo!, e.currentTarget)
+                        }
+                      }
+                    : undefined
+                }
+                className={`group relative p-5 pt-7 ${hasPhoto ? 'cursor-pointer' : ''}`}
                 style={{
                   background: NOTE_COLORS[i % NOTE_COLORS.length],
                   boxShadow: '4px 6px 0 rgba(16,18,35,.18)',
@@ -44,6 +76,10 @@ export default function FunFacts() {
               >
                 {/* washi tape */}
                 <span className="absolute -top-2.5 left-1/2 h-5 w-16 -translate-x-1/2 -rotate-2 bg-white/50" style={{ boxShadow: '0 1px 2px rgba(0,0,0,.1)' }} />
+
+                {/* a photo tucked under the note, hinting there's one to see */}
+                {hasPhoto && <PhotoCorner src={f.photo!.src} />}
+
                 <div className="mb-3 grid h-12 w-12 place-items-center rounded-xl bg-ink text-paper" style={{ boxShadow: '2px 2px 0 rgba(16,18,35,.35)' }}>
                   <Icon className="h-7 w-7" />
                 </div>
@@ -54,7 +90,26 @@ export default function FunFacts() {
           })}
         </div>
       </div>
+
+      <PolaroidLightbox photo={photo} origin={origin} onClose={() => setPhoto(null)} />
     </section>
+  )
+}
+
+/* ── the corner of a photo peeking out from under a sticky note ── */
+function PhotoCorner({ src }: { src: string }) {
+  return (
+    <span
+      aria-hidden
+      className="pointer-events-none absolute -bottom-3 -right-3 h-16 w-16 rotate-6 overflow-hidden bg-white p-1 transition-transform duration-300 group-hover:rotate-12"
+      style={{
+        border: '2px solid #101223',
+        borderRadius: '3px 5px 3px 6px',
+        boxShadow: '2px 3px 0 rgba(16,18,35,.3)',
+      }}
+    >
+      <img src={src} alt="" className="h-full w-full object-cover" loading="lazy" draggable={false} />
+    </span>
   )
 }
 

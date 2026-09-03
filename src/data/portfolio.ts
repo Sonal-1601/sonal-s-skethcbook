@@ -176,10 +176,37 @@ export const skills: Skill[] = [
   { name: 'Figma', level: 3, kind: 'tool' },
 ]
 
+// A photo pinned to a side quest. Give a fact one of these and its sticky
+// note becomes clickable — the picture opens as a polaroid.
+export type FunFactPhoto = {
+  src: string
+  alt: string
+  caption: string
+  /** CSS object-position, for steering the crop away from the centre. */
+  focus?: string
+}
+
+export type FunFact = {
+  icon: string
+  label: string
+  note: string
+  photo?: FunFactPhoto
+}
+
 // "Side quests" — the human stuff.
-export const funFacts = [
+export const funFacts: FunFact[] = [
   { icon: 'doodle', label: 'Doodling & scribbling', note: 'Notebooks, tablets, whiteboards — nothing is safe.' },
-  { icon: 'boot', label: 'Hiking', note: 'Trails > treadmills. Best ideas happen uphill.' },
+  {
+    icon: 'boot',
+    label: 'Hiking',
+    note: 'Trails > treadmills. Best ideas happen uphill.',
+    photo: {
+      src: '/photos/hiking.jpg',
+      alt: 'Sonal on a green hillside in a rain jacket, monsoon clouds and waterfalls on the ridge behind',
+      caption: 'somewhere in the maharashtra, mid-monsoon',
+      focus: '40% center',
+    },
+  },
   { icon: 'globe', label: 'Travelling', note: 'Collecting places, food and tiny doodles from each.' },
   { icon: 'controller', label: 'Gaming', note: 'Minecraft builds, Hollow Knight runs, Star Wars everything.' },
   { icon: 'planet', label: 'Space', note: 'Endlessly nerdy about rockets, planets & the void.' },

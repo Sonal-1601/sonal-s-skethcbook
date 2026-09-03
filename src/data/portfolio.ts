@@ -194,7 +194,9 @@ export type FunFact = {
   icon: string
   label: string
   note: string
-  photo?: FunFactPhoto
+  /** The first one is the photo pinned to the note; the rest sit behind it
+   *  in the pile and come forward as you tap through. */
+  photos?: FunFactPhoto[]
 }
 
 // "Side quests" — the human stuff.
@@ -204,26 +206,48 @@ export const funFacts: FunFact[] = [
     icon: 'boot',
     label: 'Hiking',
     note: 'Trails > treadmills. Best ideas happen uphill.',
-    photo: {
-      src: '/photos/hiking.jpg',
-      alt: 'Sonal on a green hillside in a rain jacket, monsoon clouds and waterfalls on the ridge behind',
-      caption: 'somewhere in the maharashtra, mid-monsoon',
-      focus: '40% center',
-    },
+    photos: [
+      {
+        src: '/photos/hiking.jpg',
+        alt: 'Sonal on a green hillside in a rain jacket, monsoon clouds and waterfalls on the ridge behind',
+        caption: 'somewhere in the maharashtra, mid-monsoon',
+        focus: '40% center',
+      },
+    ],
   },
   {
     icon: 'globe',
     label: 'Travelling',
     note: 'Collecting places, food and tiny doodles from each.',
-    photo: {
-      src: '/photos/thailand.jpg',
-      alt: 'Sonal standing before Wat Phra Kaew at the Grand Palace in Bangkok, flanked by two golden guardian statues',
-      caption: 'the grand palace, bangkok',
-      // shot on a phone at 3:4 — matching the frame means nothing gets cropped
-      aspect: '3 / 4',
-    },
+    photos: [
+      {
+        src: '/photos/thailand.jpg',
+        alt: 'Sonal standing before Wat Phra Kaew at the Grand Palace in Bangkok, flanked by two golden guardian statues',
+        caption: 'the grand palace, bangkok',
+        // shot on a phone at 3:4 — matching the frame means nothing gets cropped
+        aspect: '3 / 4',
+      },
+      {
+        src: '/photos/expressway.jpg',
+        alt: 'A rain-soaked expressway curving into a tunnel beneath a green monsoon hillside',
+        caption: 'somewhere on the expressway, mid-rain',
+        aspect: '3 / 4',
+      },
+    ],
   },
-  { icon: 'controller', label: 'Gaming', note: 'Minecraft builds, Hollow Knight runs, Star Wars everything.' },
+  {
+    icon: 'controller',
+    label: 'Gaming',
+    note: 'Minecraft builds, Hollow Knight runs, Star Wars everything.',
+    photos: [
+      {
+        src: '/photos/gaming.jpg',
+        alt: 'A backlit controller held in front of a laptop running Hollow Knight, lit blue by the screen',
+        caption: 'hollow knight, well past midnight',
+        aspect: '9 / 16',
+      },
+    ],
+  },
   { icon: 'planet', label: 'Space', note: 'Endlessly nerdy about rockets, planets & the void.' },
   { icon: 'spark', label: 'Exploring tech', note: 'If it catches my interest, I am already tinkering with it.' },
 ]

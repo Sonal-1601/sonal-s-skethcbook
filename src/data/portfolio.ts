@@ -184,6 +184,10 @@ export type FunFactPhoto = {
   caption: string
   /** CSS object-position, for steering the crop away from the centre. */
   focus?: string
+  /** Shape of the polaroid's frame as a CSS aspect-ratio, e.g. '3 / 4' for a
+   *  portrait phone shot. Match it to the photo and nothing gets cropped.
+   *  Defaults to '3 / 2'. */
+  aspect?: string
 }
 
 export type FunFact = {
@@ -207,7 +211,18 @@ export const funFacts: FunFact[] = [
       focus: '40% center',
     },
   },
-  { icon: 'globe', label: 'Travelling', note: 'Collecting places, food and tiny doodles from each.' },
+  {
+    icon: 'globe',
+    label: 'Travelling',
+    note: 'Collecting places, food and tiny doodles from each.',
+    photo: {
+      src: '/photos/thailand.jpg',
+      alt: 'Sonal standing before Wat Phra Kaew at the Grand Palace in Bangkok, flanked by two golden guardian statues',
+      caption: 'the grand palace, bangkok',
+      // shot on a phone at 3:4 — matching the frame means nothing gets cropped
+      aspect: '3 / 4',
+    },
+  },
   { icon: 'controller', label: 'Gaming', note: 'Minecraft builds, Hollow Knight runs, Star Wars everything.' },
   { icon: 'planet', label: 'Space', note: 'Endlessly nerdy about rockets, planets & the void.' },
   { icon: 'spark', label: 'Exploring tech', note: 'If it catches my interest, I am already tinkering with it.' },

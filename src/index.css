@@ -132,3 +132,82 @@ body {
   border-radius: 18px 24px 16px 22px / 20px 18px 24px 16px;
   box-shadow: 5px 6px 0 rgba(16, 18, 35, 0.28);
 }
+
+/* ── Debug Arena: Star Wars dressing ──────────────────────────────────── */
+
+/* The opening crawl, tilted away into the distance. */
+.sw-crawl {
+  perspective: 340px;
+  perspective-origin: 50% 0%;
+}
+.sw-crawl-inner {
+  transform: rotateX(42deg);
+  transform-origin: 50% 100%;
+  color: #ffd43b;
+  font-family: 'Kalam', cursive;
+  font-weight: 700;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 22px rgba(255, 190, 40, 0.4);
+  /* fade the far edge out like the real crawl does */
+  -webkit-mask-image: linear-gradient(to top, #000 45%, rgba(0, 0, 0, 0.25) 100%);
+  mask-image: linear-gradient(to top, #000 45%, rgba(0, 0, 0, 0.25) 100%);
+}
+
+/* The logo: a metal-gold gradient fill sitting inside a heavy black outline.
+   Two stacked copies, because a text-stroke would eat into the gradient. */
+.sw-title,
+.sw-title-outline {
+  display: block;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.6rem, 9vw, 5.2rem);
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+  transform: scaleY(1.14);
+}
+.sw-title-outline {
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  -webkit-text-stroke: 7px #05070f;
+  z-index: 0;
+}
+.sw-title {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    #fff8d6 0%,
+    #ffe066 30%,
+    #ffc21f 52%,
+    #c98c0a 74%,
+    #7a5203 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 34px rgba(255, 200, 60, 0.42));
+}
+
+/* Rebel-briefing hologram: cyan wash + projector scanlines. */
+.holo {
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(92, 225, 230, 0.07) 0px,
+      rgba(92, 225, 230, 0.07) 1px,
+      transparent 1px,
+      transparent 4px
+    ),
+    radial-gradient(ellipse at 50% 0%, rgba(92, 225, 230, 0.16), rgba(4, 6, 15, 0.9) 70%);
+  backdrop-filter: blur(3px);
+}
+
+/* No doodle cursor inside the arena — the lightsaber is the cursor. */
+body.game-mode,
+body.game-mode * {
+  cursor: none !important;
+}

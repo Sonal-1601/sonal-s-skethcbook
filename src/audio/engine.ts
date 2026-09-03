@@ -24,6 +24,12 @@ class AudioEngine {
   private musicNodes: AudioNode[] = []
   private delay?: DelayNode
 
+  // lightsaber hum state (a live drone, kept alive while the arena is open)
+  private humGain?: GainNode
+  private humFilter?: BiquadFilterNode
+  private humOsc: OscillatorNode[] = []
+  private humOn = false
+
   /** Create the AudioContext (must be called from a user gesture). */
   unlock() {
     if (this.ctx) {
@@ -106,6 +112,28 @@ class AudioEngine {
     src.stop(this.t + dur + 0.02)
   }
 
+  /** filtered noise whose band sweeps — the body of whooshes and sizzles */
+  private noiseSweep(dur: number, from: number, to: number, peak: number) {
+    if (!this.ctx) return
+    const src = this.ctx.createBufferSource()
+    src.buffer = this.noiseBuffer
+    src.loop = true
+    const bp = this.ctx.createBiquadFilter()
+    bp.type = 'bandpass'
+    bp.Q.value = 2.4
+    bp.frequency.setValueAtTime(from, this.t)
+    bp.frequency.exponentialRampToValueAtTime(Math.max(40, to), this.t + dur)
+    const g = this.ctx.createGain()
+    g.gain.setValueAtTime(0.0001, this.t)
+    g.gain.exponentialRampToValueAtTime(peak, this.t + dur * 0.28)
+    g.gain.exponentialRampToValueAtTime(0.0001, this.t + dur)
+    src.connect(bp)
+    bp.connect(g)
+    g.connect(this.sfxGain)
+    src.start(this.t)
+    src.stop(this.t + dur + 0.02)
+  }
+
   /** soft, slightly-random hover blip */
   hover() {
     if (!this.ctx || this.muted) return
@@ -150,11 +178,35 @@ class AudioEngine {
     }, 4 * 95)
   }
 
-  /** lightsaber swish */
+  /** lightsaber swish — a doppler-ish whoosh past the ear */
   saberSwing() {
     if (!this.ctx || this.muted) return
-    this.noiseClick(1500, 0.1, 0.04)
-    this.blip(320, 0.09, 'sawtooth', 0.03, 840)
+    const dir = Math.random() < 0.5 ? 1 : -1
+    this.noiseSweep(0.22, 260, 1500 + Math.random() * 700, 0.05 * (1 + Math.random() * 0.4))
+    this.blip(260 * (dir > 0 ? 1 : 1.25), 0.18, 'sawtooth', 0.022, 620)
+  }
+
+  /** snap-hiss: the blade igniting out of the emitter */
+  saberIgnite() {
+    if (!this.ctx || this.muted) return
+    this.noiseClick(2600, 0.05, 0.09)            // the "snap"
+    this.noiseSweep(0.45, 180, 900, 0.055)        // the "hiss" opening up
+    this.blip(70, 0.5, 'sawtooth', 0.06, 190)     // the drone winding up
+  }
+
+  /** blade collapsing back into the hilt */
+  saberRetract() {
+    if (!this.ctx || this.muted) return
+    this.noiseSweep(0.3, 1200, 160, 0.05)
+    this.blip(220, 0.28, 'sawtooth', 0.04, 60)
+  }
+
+  /** plasma meeting carapace: a sizzling burn-through */
+  saberHit() {
+    if (!this.ctx || this.muted) return
+    this.noiseClick(3000, 0.07, 0.1)
+    this.noiseSweep(0.16, 1800, 400, 0.06)
+    this.blip(150, 0.14, 'square', 0.06, 55)
   }
 
   /** bug squash splat */
@@ -164,12 +216,64 @@ class AudioEngine {
     this.blip(200, 0.12, 'square', 0.08, 70)
   }
 
+  /** Start / stop the continuous blade drone. Safe to call repeatedly. */
+  saberHum(on: boolean) {
+    this.unlock()
+    if (!this.ctx) return
+    if (on) {
+      if (this.humOn) return
+      this.humOn = true
+      const g = this.ctx.createGain()
+      g.gain.value = 0.0001
+      const lp = this.ctx.createBiquadFilter()
+      lp.type = 'lowpass'
+      lp.frequency.value = 420
+      lp.Q.value = 4
+      // Three slightly detuned saws beat against each other -> that restless
+      // "alive plasma" wobble a single oscillator can never fake.
+      for (const f of [58, 87.5, 117]) {
+        const o = this.ctx.createOscillator()
+        o.type = 'sawtooth'
+        o.frequency.value = f
+        o.detune.value = (Math.random() - 0.5) * 22
+        o.connect(lp)
+        o.start()
+        this.humOsc.push(o)
+      }
+      lp.connect(g)
+      g.connect(this.sfxGain)
+      this.humGain = g
+      this.humFilter = lp
+      g.gain.setTargetAtTime(this.muted ? 0 : 0.05, this.t, 0.25)
+    } else {
+      if (!this.humOn) return
+      this.humOn = false
+      const g = this.humGain
+      const osc = this.humOsc
+      this.humOsc = []
+      this.humGain = undefined
+      this.humFilter = undefined
+      if (g) g.gain.setTargetAtTime(0.0001, this.t, 0.12)
+      const stopAt = this.t + 0.6
+      osc.forEach((o) => o.stop(stopAt))
+    }
+  }
+
+  /** 0..1 — how hard the blade is being swung; opens the hum up. */
+  setSaberIntensity(v: number) {
+    if (!this.ctx || !this.humGain || !this.humFilter) return
+    const k = Math.max(0, Math.min(1, v))
+    this.humGain.gain.setTargetAtTime(this.muted ? 0 : 0.045 + k * 0.085, this.t, 0.08)
+    this.humFilter.frequency.setTargetAtTime(380 + k * 1500, this.t, 0.08)
+  }
+
   // ── Mute / volume ───────────────────────────────────────
   setMuted(m: boolean) {
     this.muted = m
     if (!this.ctx) return
     this.sfxGain.gain.cancelScheduledValues(this.t)
     this.sfxGain.gain.setTargetAtTime(m ? 0 : 0.9, this.t, 0.05)
+    if (this.humGain) this.humGain.gain.setTargetAtTime(m ? 0 : 0.06, this.t, 0.05)
   }
 
   // ── Music ───────────────────────────────────────────────

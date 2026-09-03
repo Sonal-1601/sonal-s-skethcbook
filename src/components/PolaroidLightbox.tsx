@@ -14,6 +14,14 @@ import type { FunFactPhoto } from '../data/portfolio'
 /** Where the polaroid flies from, so it grows out of the note you clicked. */
 export type Origin = { x: number; y: number } | null
 
+const DEFAULT_ASPECT = '3 / 2'
+
+/** '3 / 4' -> 0.75. Falls back to landscape if the value is unparseable. */
+function ratioOf(aspect: string): number {
+  const [w, h] = aspect.split('/').map((n) => Number(n.trim()))
+  return w > 0 && h > 0 ? w / h : 1.5
+}
+
 function usePrefersReducedMotion() {
   const [reduce, setReduce] = useState(false)
   useEffect(() => {
@@ -40,6 +48,9 @@ export default function PolaroidLightbox({
   const [developed, setDeveloped] = useState(false)
 
   const open = Boolean(photo)
+  // A tall photo in the wide frame would run off the bottom of the viewport,
+  // so portrait shots get a narrower polaroid.
+  const portrait = ratioOf(photo?.aspect ?? DEFAULT_ASPECT) < 1
 
   // Esc to close, and don't let the page scroll behind the overlay.
   useEffect(() => {
@@ -91,7 +102,7 @@ export default function PolaroidLightbox({
           <div className="absolute inset-0 bg-space/80 backdrop-blur-[3px]" />
 
           <motion.figure
-            className="relative m-0 w-full max-w-lg bg-white p-4 pb-5"
+            className={`relative m-0 w-full bg-white p-4 pb-5 ${portrait ? 'max-w-[19rem]' : 'max-w-lg'}`}
             style={{
               border: '2.5px solid #101223',
               borderRadius: '10px 14px 10px 16px',
@@ -136,7 +147,10 @@ export default function PolaroidLightbox({
               ✕
             </button>
 
-            <div className="relative aspect-[3/2] overflow-hidden rounded-[4px] bg-nebula">
+            <div
+              className="relative overflow-hidden rounded-[4px] bg-nebula"
+              style={{ aspectRatio: photo.aspect ?? DEFAULT_ASPECT }}
+            >
               <img
                 src={photo.src}
                 alt={photo.alt}

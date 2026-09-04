@@ -8,9 +8,12 @@
 //  never ship in a bundle. So we fetch at BUILD time, on a machine
 //  that holds the secret, and commit/deploy static numbers.
 //
-//  Usage:
-//    FOREST_REMEMBER_TOKEN=xxx npm run fetch:forest
-//    FOREST_REMEMBER_TOKEN=xxx npm run fetch:forest -- --probe
+//  Usage — put the token in .env.local (gitignored, stays out of
+//  shell history), then:
+//    npm run fetch:forest
+//    npm run fetch:forest -- --probe
+//  An explicit FOREST_REMEMBER_TOKEN env var wins over the file,
+//  which is how CI passes the repository secret.
 //
 //  --probe dumps the raw API responses to scratch/forest-probe.json
 //  without touching the generated file. Use it if the shapes below
@@ -21,6 +24,7 @@
 // ─────────────────────────────────────────────────────────────
 
 import { writeFile, mkdir } from 'node:fs/promises'
+import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -37,8 +41,24 @@ const PER_PAGE = 500
 const MAX_PAGES = 40 // hard stop: 20k sessions is far past any real account
 const MAX_SESSION_MINUTES = 24 * 60 // ignore anything absurd
 
-const TOKEN = process.env.FOREST_REMEMBER_TOKEN
+const TOKEN = process.env.FOREST_REMEMBER_TOKEN ?? readEnvLocal().FOREST_REMEMBER_TOKEN
 const PROBE = process.argv.includes('--probe')
+
+// A local `.env.local` (gitignored) keeps the token out of shell history.
+// CI passes the real env var instead, so this is a no-op there.
+function readEnvLocal() {
+  try {
+    const out = {}
+    for (const line of readFileSync(resolve(ROOT, '.env.local'), 'utf8').split('\n')) {
+      const m = /^\s*(?:export\s+)?([A-Z0-9_]+)\s*=\s*(.*)$/.exec(line)
+      if (!m) continue // blank line, comment, or something we don't understand
+      out[m[1]] = m[2].trim().replace(/^(['"])(.*)\1$/, '$2')
+    }
+    return out
+  } catch {
+    return {} // no file is the normal case
+  }
+}
 
 main()
 

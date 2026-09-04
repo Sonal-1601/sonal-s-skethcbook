@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
 import { motion, useScroll, useSpring } from 'framer-motion'
 import { Rocket } from './Doodles'
+import { hasWriting } from '../data/writing'
 
 const LINKS = [
   { href: '#about', label: 'Story' },
   { href: '#skills', label: 'Inventory' },
   { href: '#commits', label: 'Commits' },
   { href: '#forest', label: 'Forest' },
+  // the Captain's Log only exists when there are posts to show
+  ...(hasWriting ? [{ href: '#writing', label: 'Log' }] : []),
   { href: '#projects', label: 'Quests' },
   { href: '#fun', label: 'Side Quests' },
   { href: '#contact', label: 'Say Hi' },
@@ -40,7 +43,7 @@ export default function Nav() {
             <span className="font-marker text-2xl font-bold leading-none text-paper">Sonal</span>
           </a>
 
-          <div className="hidden items-center gap-6 md:flex">
+          <div className="hidden items-center gap-5 md:flex lg:gap-6">
             {LINKS.map((l) => (
               <a
                 key={l.href}

@@ -4,6 +4,7 @@ import { writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { SITE } from './src/data/site'
 import { profile, projects, skills, socials, about } from './src/data/portfolio'
+import { writing } from './src/data/writing'
 
 // ─────────────────────────────────────────────────────────────
 //  Generates every SEO artefact from src/data/site.ts +
@@ -77,7 +78,34 @@ function jsonLd(): string {
     })),
   }
 
-  return JSON.stringify({ '@context': 'https://schema.org', '@graph': [person, website, profilePage, portfolio] })
+  // the Captain's Log — posts live on Medium, so they're linked out
+  // rather than listed as pages of this site
+  const writingList =
+    writing.posts.length > 0
+      ? {
+          '@type': 'ItemList',
+          '@id': `${SITE.url}/#writing`,
+          name: `Writing by ${profile.name}`,
+          itemListElement: writing.posts.map((post, i) => ({
+            '@type': 'ListItem',
+            position: i + 1,
+            item: {
+              '@type': 'BlogPosting',
+              headline: post.title,
+              url: post.url,
+              author: { '@id': `${SITE.url}/#person` },
+              ...(post.iso ? { datePublished: post.iso } : {}),
+              ...(post.excerpt ? { description: post.excerpt } : {}),
+              ...(post.cover ? { image: post.cover } : {}),
+            },
+          })),
+        }
+      : null
+
+  return JSON.stringify({
+    '@context': 'https://schema.org',
+    '@graph': [person, website, profilePage, portfolio, ...(writingList ? [writingList] : [])],
+  })
 }
 
 function robotsTxt(): string {
@@ -147,6 +175,13 @@ function llmsTxt(): string {
   const byKind = (k: (typeof skills)[number]['kind']) =>
     skills.filter((s) => s.kind === k).map((s) => s.name).join(', ')
 
+  // Only rendered when there's something in the Captain's Log.
+  const writingBlock = writing.posts.length
+    ? `## Writing\n\n${writing.posts
+        .map((p) => `- **${p.title}**${p.date ? ` (${p.date})` : ''}: ${p.url}${p.excerpt ? ` — ${p.excerpt}` : ''}`)
+        .join('\n')}\n\nPublished on Medium: ${writing.profile}\n\n`
+    : ''
+
   return `# ${profile.name}
 
 > ${profile.tagline}
@@ -169,7 +204,7 @@ Primary specialism: Flutter and Dart for cross-platform mobile development.
 
 ${projectLines}
 
-## Links
+${writingBlock}## Links
 
 - Portfolio: ${SITE.url}/
 - GitHub: ${socials.github}

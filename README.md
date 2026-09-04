@@ -65,11 +65,17 @@ calls GitHub. On top of that, `remember_token` is a long-lived, *write-capable*
 account credential — anything in a Vite bundle is public, so it can never ship
 to the client.
 
-So the data is snapshotted at **build time** instead:
+So the data is snapshotted at **build time** instead. Put the token in
+`.env.local` (gitignored, and it keeps the credential out of your shell
+history):
 
 ```bash
-FOREST_REMEMBER_TOKEN=xxx npm run fetch:forest
+echo 'FOREST_REMEMBER_TOKEN=xxx' >> .env.local
+npm run fetch:forest
 ```
+
+An explicit `FOREST_REMEMBER_TOKEN=xxx npm run fetch:forest` still works and
+takes precedence — that's how CI passes the repository secret.
 
 That writes [`src/data/forest.generated.ts`](src/data/forest.generated.ts),
 which the site imports as plain static data. `npm run build` runs it
@@ -92,6 +98,37 @@ repository secret to switch it on.
 > drifts, `npm run fetch:forest -- --probe` dumps the raw responses to
 > `scratch/forest-probe.json` without touching the generated file.
 
+## 🪶 The captain's log
+
+The **Captain's Log** section tears Sonal's [Medium](https://medium.com/@pandeysonal1601)
+posts out as pages of a notebook — entry number, date, reading time, the cover
+image taped on as a clipping.
+
+Medium's RSS feed is public, but like Forest it sends **no CORS headers**, so the
+browser can't read it from the page. Same answer: snapshot it at build time.
+Unlike Forest there's no credential involved, so there's nothing to configure —
+the script just runs:
+
+```bash
+npm run fetch:medium
+npm run fetch:medium -- --probe   # dump the raw feed to scratch/medium-probe.json
+```
+
+That writes [`src/data/writing.generated.ts`](src/data/writing.generated.ts), which
+the site imports as plain static data. `npm run build` runs it automatically via
+`prebuild`. `MEDIUM_FEED_URL` overrides the feed if the handle ever changes.
+
+**Keeping it fresh** — [`.github/workflows/refresh-writing.yml`](.github/workflows/refresh-writing.yml)
+re-snapshots daily and commits only when something actually changed (the script
+compares everything but its own timestamp, so a quiet day is a no-op rather than
+a daily empty commit).
+
+> There is deliberately **no sample fallback** here. A fake forest is harmless;
+> fake blog posts with fake links are a lie. If the log is empty — nothing
+> published yet, or the feed was unreachable on the last build — the section and
+> its nav link simply don't render. A post with no prose (Medium lets you publish
+> a picture-first entry) just shows without an excerpt or a reading time.
+
 ## 🔎 SEO, social cards & AEO
 
 Everything is generated at build time from **one file**:
@@ -101,7 +138,7 @@ tag, `og:url`, sitemap, robots and `llms.txt` all follow — they can't drift.
 | Output | Where it comes from |
 |---|---|
 | `<head>` meta, Open Graph, Twitter card | `index.html` + `__SITE_*__` tokens |
-| JSON-LD (`Person`, `WebSite`, `ProfilePage`, project `ItemList`) | built from the real `projects` / `skills` data |
+| JSON-LD (`Person`, `WebSite`, `ProfilePage`, project + writing `ItemList`) | built from the real `projects` / `skills` / Medium data |
 | `/robots.txt`, `/sitemap.xml`, `/llms.txt`, `/site.webmanifest` | emitted into `dist/` by the `seo()` plugin |
 | `/og.png`, `/apple-touch-icon.png` | `npm run make:og` (committed, not rebuilt each time) |
 

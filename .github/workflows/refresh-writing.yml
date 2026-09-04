@@ -1,0 +1,42 @@
+# Re-snapshots the Medium feed into the Captain's Log once a day and
+# commits it, so a new post shows up on the portfolio without a manual
+# deploy.
+#
+# No setup: Medium's RSS feed is public, so unlike the focus forest this
+# needs no secret. If the feed is unreachable the script no-ops and
+# nothing is committed.
+
+name: Refresh captain's log
+
+on:
+  schedule:
+    - cron: '41 4 * * *' # 04:41 UTC daily
+  workflow_dispatch: # lets you run it by hand from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Fetch latest Medium snapshot
+        run: node scripts/fetch-medium.mjs
+
+      - name: Commit if there's a new entry
+        run: |
+          if git diff --quiet -- src/data/writing.generated.ts; then
+            echo "no change — nothing new in the log"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/writing.generated.ts
+          git commit -m "chore: refresh captain's log snapshot"
+          git push

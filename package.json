@@ -7,8 +7,9 @@
   "scripts": {
     "dev": "vite",
     "fetch:forest": "node scripts/fetch-forest.mjs",
+    "fetch:medium": "node scripts/fetch-medium.mjs",
     "make:og": "node scripts/make-og.mjs",
-    "prebuild": "node scripts/fetch-forest.mjs",
+    "prebuild": "node scripts/fetch-forest.mjs && node scripts/fetch-medium.mjs",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },

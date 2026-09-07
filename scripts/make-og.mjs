@@ -39,10 +39,15 @@ async function findChrome() {
 const TARGETS = [
   {
     url: `file://${join(ROOT, 'scripts/og-template.html')}`,
-    out: join(ROOT, 'public/og.png'),
+    out: join(ROOT, 'public/og.jpg'),
     width: 1200,
     height: 630,
     scale: 1,
+    // JPEG, not PNG: the same card is ~460 kB as a PNG and ~175 kB here, and
+    // WhatsApp quietly drops link-preview images that run much past ~300 kB.
+    // At q90 the lettering stays crisp — check it if you re-tune the template.
+    format: 'jpeg',
+    quality: 90,
   },
   {
     // the rocket favicon on the site's dark background, for iOS home screens
@@ -109,9 +114,14 @@ for (const t of TARGETS) {
   })
   await sleep(600)
 
-  const { data } = await send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })
-  await writeFile(t.out, Buffer.from(data, 'base64'))
-  console.log(`✓ ${t.out.replace(ROOT + '/', '')}  ${t.width}×${t.height}`)
+  const { data } = await send('Page.captureScreenshot', {
+    format: t.format ?? 'png',
+    ...(t.quality ? { quality: t.quality } : {}),
+    captureBeyondViewport: false,
+  })
+  const bytes = Buffer.from(data, 'base64')
+  await writeFile(t.out, bytes)
+  console.log(`✓ ${t.out.replace(ROOT + '/', '')}  ${t.width}×${t.height}  ${(bytes.length / 1024).toFixed(0)} kB`)
 }
 
 ws.close()

@@ -22,7 +22,8 @@ export const SITE = {
   // shorter, punchier — used for link previews in chat apps
   socialDescription:
     'Flutter & Dart developer who builds mobile apps that feel good to use — wrapped in a hand-drawn, game-inspired space sketchbook.',
-  ogImage: '/og.png',
+  ogImage: '/og.jpg',
+  ogImageType: 'image/jpeg',
   ogImageAlt:
     "Sonal's Sketchbook — Sonal Pandey, software developer, doodler and space explorer",
   locale: 'en_US',

@@ -260,6 +260,7 @@ function seo(): Plugin {
           .replaceAll('__SITE_DESCRIPTION__', SITE.description)
           .replaceAll('__SITE_SOCIAL_DESCRIPTION__', SITE.socialDescription)
           .replaceAll('__SITE_OG_IMAGE__', `${SITE.url}${SITE.ogImage}`)
+          .replaceAll('__SITE_OG_IMAGE_TYPE__', SITE.ogImageType)
           .replaceAll('__SITE_OG_IMAGE_ALT__', SITE.ogImageAlt)
           .replaceAll('__SITE_LOCALE__', SITE.locale)
           .replaceAll('__SITE_THEME_COLOR__', SITE.themeColor)

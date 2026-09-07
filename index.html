@@ -31,7 +31,9 @@
     <meta property="og:description" content="__SITE_SOCIAL_DESCRIPTION__" />
     <meta property="og:url" content="__SITE_URL__/" />
     <meta property="og:image" content="__SITE_OG_IMAGE__" />
-    <meta property="og:image:type" content="image/png" />
+    <!-- some older scrapers only look for the https variant -->
+    <meta property="og:image:secure_url" content="__SITE_OG_IMAGE__" />
+    <meta property="og:image:type" content="__SITE_OG_IMAGE_TYPE__" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="__SITE_OG_IMAGE_ALT__" />

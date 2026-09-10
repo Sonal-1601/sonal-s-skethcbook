@@ -8,8 +8,8 @@
 //  never ship in a bundle. So we fetch at BUILD time, on a machine
 //  that holds the secret, and commit/deploy static numbers.
 //
-//  Usage — put the token in .env.local (gitignored, stays out of
-//  shell history), then:
+//  Usage — get a token once, then snapshot as often as you like:
+//    npm run fetch:forest -- --login   # sign in, write .env.local
 //    npm run fetch:forest
 //    npm run fetch:forest -- --probe
 //  An explicit FOREST_REMEMBER_TOKEN env var wins over the file,
@@ -27,6 +27,7 @@ import { writeFile, mkdir } from 'node:fs/promises'
 import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { createInterface } from 'node:readline'
 
 const API = 'https://c88fef96.forestapp.cc/api/v1'
 // the official Forest Chrome extension's origin — the API expects it
@@ -43,6 +44,7 @@ const MAX_SESSION_MINUTES = 24 * 60 // ignore anything absurd
 
 const TOKEN = process.env.FOREST_REMEMBER_TOKEN ?? readEnvLocal().FOREST_REMEMBER_TOKEN
 const PROBE = process.argv.includes('--probe')
+const LOGIN = process.argv.includes('--login')
 
 // A local `.env.local` (gitignored) keeps the token out of shell history.
 // CI passes the real env var instead, so this is a no-op there.
@@ -63,6 +65,8 @@ function readEnvLocal() {
 main()
 
 async function main() {
+  if (LOGIN) return login()
+
   if (!TOKEN) {
     console.log(
       '· fetch:forest — no FOREST_REMEMBER_TOKEN set, keeping the existing snapshot.\n' +
@@ -320,6 +324,96 @@ export const generatedForest: ForestSnapshot = {
   topTags,
 }
 `
+}
+
+/* ── login ───────────────────────────────────────────────────── */
+
+// Forest's remember_token is what the Chrome extension keeps in a cookie.
+// Rather than making you dig it out of DevTools, trade the account
+// password for one here — the password is read straight into the request
+// and never written anywhere, only the returned token is persisted.
+async function login() {
+  const email = process.env.FOREST_EMAIL ?? (await ask('Forest email: '))
+  const password = process.env.FOREST_PASSWORD ?? (await ask('Forest password: ', { silent: true }))
+
+  if (!email || !password) {
+    console.error('· fetch:forest --login — need both an email and a password.')
+    return
+  }
+
+  const res = await fetch(`${API}/sessions`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Origin: EXT_ORIGIN,
+    },
+    body: JSON.stringify({ session: { email, password } }),
+  })
+
+  const text = await res.text()
+  const body = safeParse(text)
+
+  if (!res.ok) {
+    console.error(`· fetch:forest --login — POST /sessions → ${res.status} ${res.statusText}`)
+    console.error(`  ${text.slice(0, 400)}`)
+    return
+  }
+
+  // This is an unofficial API, so don't assume where the token sits.
+  const token = body?.remember_token ?? body?.user?.remember_token ?? body?.session?.remember_token
+
+  if (!token) {
+    console.error('· fetch:forest --login — signed in, but no remember_token in the response.')
+    console.error(`  top-level keys: ${Object.keys(body ?? {}).join(', ') || '(none)'}`)
+    console.error('  the shape may have drifted — paste those keys and we can re-point this.')
+    return
+  }
+
+  await saveToken(token)
+}
+
+function safeParse(text) {
+  try {
+    return JSON.parse(text)
+  } catch {
+    return null
+  }
+}
+
+// Rewrite in place if the key is already there, otherwise append, so
+// running --login twice doesn't leave two conflicting tokens behind.
+async function saveToken(token) {
+  const path = resolve(ROOT, '.env.local')
+  const line = `FOREST_REMEMBER_TOKEN=${token}`
+
+  let existing = ''
+  try {
+    existing = readFileSync(path, 'utf8')
+  } catch {
+    existing = '' // first run, no file yet
+  }
+
+  const next = /^FOREST_REMEMBER_TOKEN=.*$/m.test(existing)
+    ? existing.replace(/^FOREST_REMEMBER_TOKEN=.*$/m, line)
+    : `${existing.replace(/\s*$/, '')}\n${line}\n`.replace(/^\n/, '')
+
+  await writeFile(path, next)
+  console.log('✓ fetch:forest --login — token saved to .env.local (gitignored).')
+  console.log('  next: npm run fetch:forest')
+}
+
+function ask(label, { silent = false } = {}) {
+  return new Promise((res) => {
+    const rl = createInterface({ input: process.stdin, output: process.stdout, terminal: true })
+    // Suppress the echo so a password never lands in the terminal scrollback.
+    if (silent) rl._writeToOutput = (s) => (s.includes(label) ? process.stdout.write(label) : undefined)
+    rl.question(label, (answer) => {
+      rl.close()
+      if (silent) process.stdout.write('\n')
+      res(answer.trim())
+    })
+  })
 }
 
 /* ── dates ───────────────────────────────────────────────────── */

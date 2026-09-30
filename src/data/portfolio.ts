@@ -252,6 +252,38 @@ export const funFacts: FunFact[] = [
   { icon: 'spark', label: 'Exploring tech', note: 'If it catches my interest, I am already tinkering with it.' },
 ]
 
+// ── Frames That Rewired Me ───────────────────────────────────
+//  Cinema + art that shape how I think. `nowShowing` is whatever's on
+//  the projector right now. Every phrase in `highlights` gets a marker
+//  swipe wherever it turns up in the story, the plot hole or the
+//  takeaway, so keep them word-for-word.
+export const nowShowing = {
+  title: 'Limitless',
+  year: 2011,
+  director: 'Neil Burger',
+  hook: 'the one living rent-free in my head',
+  story: [
+    "Eddie Morra is stuck — broke, blocked, going nowhere. Then he takes one clear little pill, NZT-48, and his whole brain comes online: everything he's ever read, heard or seen, suddenly organised and within reach.",
+    "I didn't walk out wanting the pill. I walked out obsessed with the question underneath it — how far my brain could actually go if I trained it on purpose.",
+    "So that's become a big part of my journey lately: treating my brain like a project. Set the goal, show up, measure it, iterate. Focus is a muscle, learning is a loop, and there's no final release — only the next build.",
+    'And on the days things slip, this is the reminder that pulls me back. A bad day is a failed build, not a broken codebase — read the logs, fix what broke, push again.',
+  ],
+  // the film's premise, fact-checked
+  plotHole:
+    "The film's big line — that we can only access 20% of our brains — is a myth. We already use all of it. The real upgrade is neuroplasticity: the brain physically rewires itself around whatever you repeat.",
+  plotTwist: 'Slower than a pill. But it never wears off.',
+  takeaway:
+    "The version of me I'm chasing isn't at the bottom of a pill bottle — it's built one focused session at a time.",
+  highlights: [
+    'NZT-48',
+    'how far my brain could actually go',
+    'treating my brain like a project',
+    'a failed build, not a broken codebase',
+    'neuroplasticity',
+    'one focused session at a time',
+  ],
+}
+
 export const socials = {
   github: 'https://github.com/Sonal-1601',
   linkedin: 'https://www.linkedin.com/in/pandeysonal/',

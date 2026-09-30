@@ -85,7 +85,7 @@ export default function CaptainsLog() {
     <section id="writing" className="relative z-10 px-5 py-24">
       <div className="mx-auto max-w-3xl">
         <SectionHeading
-          kicker="2.7"
+          kicker="2.8"
           kickerLabel="Open Captain's Log"
           title="Captain's Log"
           color={ACCENT}

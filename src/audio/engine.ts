@@ -216,6 +216,23 @@ class AudioEngine {
     this.blip(200, 0.12, 'square', 0.08, 70)
   }
 
+  /** NZT-48 kicking in — a bright rising shimmer as everything comes online */
+  nzt() {
+    if (!this.ctx || this.muted) return
+    this.blip(220, 0.55, 'sine', 0.08, 880)
+    this.noiseSweep(0.5, 400, 3200, 0.025)
+    ;[1046.5, 1318.51, 1567.98].forEach((f, i) =>
+      window.setTimeout(() => this.blip(f, 0.22, 'triangle', 0.05), 260 + i * 80),
+    )
+  }
+
+  /** ...and it wears off — the world drains back to grey */
+  comedown() {
+    if (!this.ctx || this.muted) return
+    this.blip(440, 0.8, 'sine', 0.06, 110)
+    this.noiseSweep(0.6, 1600, 200, 0.02)
+  }
+
   /** Start / stop the continuous blade drone. Safe to call repeatedly. */
   saberHum(on: boolean) {
     this.unlock()

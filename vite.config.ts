@@ -1,9 +1,9 @@
-import { defineConfig, type Plugin } from 'vite'
+import { defineConfig, type Connect, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import { writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { SITE } from './src/data/site'
-import { profile, projects, skills, socials, about } from './src/data/portfolio'
+import { profile, projects, skills, socials, about, nowShowing } from './src/data/portfolio'
 import { writing } from './src/data/writing'
 
 // ─────────────────────────────────────────────────────────────
@@ -200,6 +200,16 @@ ${about.paragraphs.join('\n\n')}
 
 Primary specialism: Flutter and Dart for cross-platform mobile development.
 
+## What's inspiring me
+
+Cinema and art are a big part of what shapes me. Now showing: **${nowShowing.title}** (${nowShowing.year}, dir. ${nowShowing.director}).
+
+${nowShowing.story.join('\n\n')}
+
+${nowShowing.plotHole} ${nowShowing.plotTwist}
+
+${nowShowing.takeaway}
+
 ## Projects
 
 ${projectLines}
@@ -280,7 +290,35 @@ function seo(): Plugin {
   }
 }
 
+// Vercel answers any path it has no file for with dist/404.html. Vite's dev
+// and preview servers are in SPA mode and answer with index.html instead,
+// which would hide the 404 page locally — so mirror Vercel: any page
+// navigation other than the home page gets 404.html. Real files (/og.jpg,
+// /llms.txt…) have an extension and are left alone. The status stays 200
+// locally; only Vercel sends a true 404.
+function notFoundFallback(): Plugin {
+  const rewrite: Connect.NextHandleFunction = (req, _res, next) => {
+    const path = (req.url ?? '/').split('?')[0]
+    const isPage = req.headers.accept?.includes('text/html') && !/\.\w+$/.test(path)
+    if (isPage && path !== '/') req.url = '/404.html'
+    next()
+  }
+  return {
+    name: 'not-found-fallback',
+    configureServer: (server) => void server.middlewares.use(rewrite),
+    configurePreviewServer: (server) => void server.middlewares.use(rewrite),
+  }
+}
+
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), seo()],
+  plugins: [react(), seo(), notFoundFallback()],
+  build: {
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        notFound: resolve(__dirname, '404.html'),
+      },
+    },
+  },
 })

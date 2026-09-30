@@ -133,6 +133,18 @@ body {
   box-shadow: 5px 6px 0 rgba(16, 18, 35, 0.28);
 }
 
+/* ── Frames: signals firing along freshly-wired pathways ──────────────── */
+/* dash + gap = 16, so shifting by -32 loops seamlessly */
+@keyframes synapse {
+  to {
+    stroke-dashoffset: -32;
+  }
+}
+.synapse-flow {
+  stroke-dasharray: 2 14;
+  animation: synapse 0.9s linear infinite;
+}
+
 /* ── Debug Arena: Star Wars dressing ──────────────────────────────────── */
 
 /* The opening crawl, tilted away into the distance. */

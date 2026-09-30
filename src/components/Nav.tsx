@@ -3,11 +3,12 @@ import { motion, useScroll, useSpring } from 'framer-motion'
 import { Rocket } from './Doodles'
 import { hasWriting } from '../data/writing'
 
-const LINKS = [
+export const NAV_LINKS = [
   { href: '#about', label: 'Story' },
   { href: '#skills', label: 'Inventory' },
   { href: '#commits', label: 'Commits' },
   { href: '#forest', label: 'Forest' },
+  { href: '#frames', label: 'Frames' },
   // the Captain's Log only exists when there are posts to show
   ...(hasWriting ? [{ href: '#writing', label: 'Log' }] : []),
   { href: '#projects', label: 'Quests' },
@@ -43,12 +44,13 @@ export default function Nav() {
             <span className="font-marker text-2xl font-bold leading-none text-paper">Sonal</span>
           </a>
 
-          <div className="hidden items-center gap-5 md:flex lg:gap-6">
-            {LINKS.map((l) => (
+          {/* nine links is snug on a tablet — tighten up until there's room */}
+          <div className="hidden items-center gap-3 md:flex lg:gap-6">
+            {NAV_LINKS.map((l) => (
               <a
                 key={l.href}
                 href={l.href}
-                className="sketch-link font-hand text-lg text-paper/85 transition-colors hover:text-gold"
+                className="sketch-link whitespace-nowrap font-hand text-base text-paper/85 transition-colors hover:text-gold lg:text-lg"
               >
                 {l.label}
               </a>
@@ -80,7 +82,7 @@ export default function Nav() {
             className="border-t border-paper/10 bg-space/95 px-5 py-4 backdrop-blur-md md:hidden"
           >
             <div className="flex flex-col gap-3">
-              {LINKS.map((l) => (
+              {NAV_LINKS.map((l) => (
                 <a
                   key={l.href}
                   href={l.href}

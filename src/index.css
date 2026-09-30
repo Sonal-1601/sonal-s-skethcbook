@@ -145,6 +145,61 @@ body {
   animation: synapse 0.9s linear infinite;
 }
 
+/* ── Frames: Fight Club's projector — grain, a stray scratch, cue marks ── */
+.film-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+  opacity: 0.3;
+  animation: grain 0.5s steps(4) infinite;
+}
+@keyframes grain {
+  0%   { background-position: 0 0; }
+  25%  { background-position: -40px 25px; }
+  50%  { background-position: 30px -35px; }
+  75%  { background-position: -20px -15px; }
+  100% { background-position: 0 0; }
+}
+.film-scratch {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.22);
+  opacity: 0;
+  animation: scratch 4.6s steps(1) infinite;
+}
+@keyframes scratch {
+  0%   { left: 22%; opacity: 0.55; }
+  3%   { left: 23%; opacity: 0.3; }
+  6%   { opacity: 0; }
+  51%  { left: 68%; opacity: 0.45; }
+  54%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+/* the changeover cue: a pale burn that blinks twice, like the real thing */
+.cue-mark {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 248, 230, 0.95) 0 34%, rgba(255, 214, 150, 0.55) 52%, transparent 70%);
+}
+.cue-blink {
+  animation: cue 2.6s steps(1) infinite;
+}
+@keyframes cue {
+  0%   { opacity: 1; }
+  9%   { opacity: 0.18; }
+  17%  { opacity: 1; }
+  26%  { opacity: 0.18; }
+  100% { opacity: 0.18; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cue-blink {
+    animation: none;
+  }
+}
+
 /* ── Debug Arena: Star Wars dressing ──────────────────────────────────── */
 
 /* The opening crawl, tilted away into the distance. */

@@ -233,6 +233,17 @@ class AudioEngine {
     this.noiseSweep(0.6, 1600, 200, 0.02)
   }
 
+  /** ding-ding — two strikes on a ring bell. Inharmonic partials are what make it read as brass. */
+  bell() {
+    if (!this.ctx || this.muted) return
+    const strike = () => {
+      this.noiseClick(4800, 0.03, 0.06)
+      ;[[830, 0.09], [2180, 0.045], [3510, 0.022]].forEach(([f, peak]) => this.blip(f, 1.3, 'sine', peak))
+    }
+    strike()
+    window.setTimeout(strike, 190)
+  }
+
   /** Start / stop the continuous blade drone. Safe to call repeatedly. */
   saberHum(on: boolean) {
     this.unlock()

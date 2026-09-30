@@ -253,11 +253,11 @@ export const funFacts: FunFact[] = [
 ]
 
 // ── Frames That Rewired Me ───────────────────────────────────
-//  Cinema + art that shape how I think. `nowShowing` is whatever's on
-//  the projector right now. Every phrase in `highlights` gets a marker
-//  swipe wherever it turns up in the story, the plot hole or the
-//  takeaway, so keep them word-for-word.
-export const nowShowing = {
+//  Cinema + art that shape how I think, screened as a double feature:
+//  Reel 01 is `limitless`, Reel 02 is `fightClub`. In each one, every
+//  phrase in `highlights` gets a marker swipe wherever it turns up in
+//  the story, the notes or the takeaway, so keep them word-for-word.
+export const limitless = {
   title: 'Limitless',
   year: 2011,
   director: 'Neil Burger',
@@ -281,6 +281,72 @@ export const nowShowing = {
     'a failed build, not a broken codebase',
     'neuroplasticity',
     'one focused session at a time',
+  ],
+}
+
+//  Reel 02 tells my journey in rounds. Each round is one beat of the
+//  film (`onScreen`, shown as the subtitle) next to the matching beat
+//  of mine (`mine`). The projector draws one scene per round, in this
+//  order, so keep it at five.
+export const fightClub = {
+  title: 'Fight Club',
+  year: 1999,
+  director: 'David Fincher',
+  hook: 'the one that taught me to take the hit',
+  story: [
+    "A guy so numb he can't even sleep, flipping through furniture catalogues, drifting through a life that looks fine on paper. Then he meets Tyler Durden — and finds out what he's made of the only way the film believes you can: by stepping into the ring.",
+    "It stuck with me because it's the opposite of a shortcut. Limitless sold a pill; Fight Club says the upgrade costs something — you earn it by taking the hits you'd rather dodge.",
+    "For me, the ring has always been the work. Every stubborn bug, every stack I didn't know yet, every build that went red. So here's my journey the way Fincher might cut it: in rounds.",
+  ],
+  rounds: [
+    {
+      title: 'First night',
+      onScreen: 'a basement, one bare bulb, a crowd of strangers. he steps in anyway.',
+      mine: "I wandered into programming chasing a new challenge — and got one. I didn't know a widget from a wizard, but I stepped into the light anyway.",
+    },
+    {
+      title: 'Take the hit',
+      onScreen: 'he gets knocked down — and gets up more awake than he’s been in years.',
+      mine: 'Red builds. Stack traces longer than my code. Bugs that only came out at 2 a.m. I lost plenty of those rounds — and every one hit a little softer than the last.',
+    },
+    {
+      title: 'Homework',
+      onScreen: 'tyler hands out homework: small, scary, done alone.',
+      mine: 'So I set my own. Go deep on Flutter & Dart. Build a whole game — Blue Zombie — just for the love of it. Grow a forest of focus hours. Write the lessons down.',
+    },
+    {
+      title: 'The club grows',
+      onScreen: 'one basement turns into basements in every city.',
+      mine: 'Turns out nobody fights alone. Open source, fellow builders, the artists I built Artist On Click for — the ring kept getting bigger, and so did I.',
+    },
+    {
+      title: 'Plot twist',
+      onScreen: 'the guy he wanted to be was him the whole time. ✦',
+      mine: 'The confident dev I kept waiting to become — the one who just ships — was never someone else. It was me, the day I stopped waiting for permission.',
+    },
+  ],
+  // what people get wrong about the film
+  misread:
+    'A lot of people walk out thinking Tyler Durden is the hero. He isn’t — the film is a warning about him, not a how-to. The chaos was never the point. The point was a numb guy finally waking up.',
+  misreadPunchline: 'Keep the grit. Leave the mayhem.',
+  // my own house rules, taped to the basement wall
+  rules: [
+    'You DO talk about Build Club. Write it down, share what broke.',
+    'Show up on the ugly days too.',
+    'One bug at a time.',
+    'No ego. Ask the dumb question.',
+    'A red build is a round lost, not the fight.',
+    'Rest is part of training. Close the laptop, come back sharper.',
+    "If it's your first night with a new stack, you build something anyway.",
+  ],
+  takeaway: "I'm not the fighter I was waiting to become. I'm the one who kept stepping back into the ring.",
+  highlights: [
+    'stepping into the ring',
+    'the upgrade costs something',
+    'the ring has always been the work',
+    'a warning about him',
+    'waking up',
+    'kept stepping back into the ring',
   ],
 }
 

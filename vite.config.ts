@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 import { writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { SITE } from './src/data/site'
-import { profile, projects, skills, socials, about, nowShowing } from './src/data/portfolio'
+import { profile, projects, skills, socials, about, limitless, fightClub } from './src/data/portfolio'
 import { writing } from './src/data/writing'
 
 // ─────────────────────────────────────────────────────────────
@@ -202,13 +202,27 @@ Primary specialism: Flutter and Dart for cross-platform mobile development.
 
 ## What's inspiring me
 
-Cinema and art are a big part of what shapes me. Now showing: **${nowShowing.title}** (${nowShowing.year}, dir. ${nowShowing.director}).
+Cinema and art are a big part of what shapes me. Tonight's a double feature.
 
-${nowShowing.story.join('\n\n')}
+### ${limitless.title} (${limitless.year}, dir. ${limitless.director})
 
-${nowShowing.plotHole} ${nowShowing.plotTwist}
+${limitless.story.join('\n\n')}
 
-${nowShowing.takeaway}
+${limitless.plotHole} ${limitless.plotTwist}
+
+${limitless.takeaway}
+
+### ${fightClub.title} (${fightClub.year}, dir. ${fightClub.director})
+
+${fightClub.story.join('\n\n')}
+
+My journey, in rounds:
+
+${fightClub.rounds.map((r, i) => `${i + 1}. **${r.title}** — ${r.mine}`).join('\n')}
+
+${fightClub.misread} ${fightClub.misreadPunchline}
+
+${fightClub.takeaway}
 
 ## Projects
 

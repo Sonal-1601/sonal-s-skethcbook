@@ -9,7 +9,7 @@ export const profile = {
   // Rotating roles for the typewriter in the hero
   roles: ['Software Developer', 'Flutter Developer', 'Open Source Contributor', 'Doodler', 'Space Nerd'],
   location: 'India',
-  currentRole: 'Software Developer',
+  currentRole: 'Software Engineer',
   currentCompany: 'Enpointe Io',
   tagline: 'I build things for screens, doodle on everything else, and get gloriously lost in space + games.',
 }

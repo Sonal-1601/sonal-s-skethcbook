@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { RoughNotation, RoughNotationGroup } from 'react-rough-notation'
-import { about, aboutSlides } from '../../data/portfolio'
+import { about, aboutSlides, profile } from '../../data/portfolio'
 import { LevelChip, ScribbleUnderline } from '../ui'
 import { Heart } from '../Doodles'
 import PolaroidStack from '../PolaroidStack'
@@ -74,7 +74,7 @@ export default function About() {
             {/* quick facts strip */}
             <div className="mt-8 flex flex-wrap gap-3">
               <Fact label="based in" value="India 🇮🇳" />
-              <Fact label="currently" value="Dev @ Enpointe Io" />
+              <Fact label="currently" value={`${profile.currentRole} @ ${profile.currentCompany}`} />
               <Fact label="mode" value="always exploring" />
             </div>
 

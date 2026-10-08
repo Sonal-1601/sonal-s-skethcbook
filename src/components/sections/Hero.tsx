@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
-import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { useEffect, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { profile } from '../../data/portfolio'
-import { Planet, Star5, Sparkle, Creeper, Lightsaber, Vessel, Comet, Rocket } from '../Doodles'
-import Astronaut from '../Astronaut'
+import { Rocket } from '../Doodles'
+import OrbitScene from '../OrbitScene'
 import { sound } from '../../audio/engine'
 import { confettiBurst } from '../../lib/confetti'
 
@@ -34,8 +34,8 @@ function useTypewriter(words: string[], speed = 90, pause = 1400) {
 
 export default function Hero() {
   const roleText = useTypewriter(profile.roles)
-  const sceneRef = useRef<HTMLDivElement>(null)
   const [started, setStarted] = useState(false)
+  const [kicks, setKicks] = useState(0)
 
   // "Press Start" = boot the whole experience: turn on sound + music, play the
   // arcade jingle, confetti, flash GAME START, then dive into the story.
@@ -48,30 +48,10 @@ export default function Hero() {
     const r = e.currentTarget.getBoundingClientRect()
     confettiBurst(r.left + r.width / 2, r.top + r.height / 2, 42)
     setStarted(true)
+    setKicks((k) => k + 1)
     window.setTimeout(() => setStarted(false), 1300)
     window.setTimeout(() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }), 720)
   }
-
-  // Mouse parallax for the floating scene
-  const mx = useMotionValue(0)
-  const my = useMotionValue(0)
-  const sx = useSpring(mx, { stiffness: 60, damping: 20 })
-  const sy = useSpring(my, { stiffness: 60, damping: 20 })
-  const t1x = useTransform(sx, (v) => v * 26)
-  const t1y = useTransform(sy, (v) => v * 26)
-  const t2x = useTransform(sx, (v) => v * -18)
-  const t2y = useTransform(sy, (v) => v * -18)
-  const t3x = useTransform(sx, (v) => v * 40)
-  const t3y = useTransform(sy, (v) => v * 40)
-
-  useEffect(() => {
-    const onMove = (e: MouseEvent) => {
-      mx.set(e.clientX / window.innerWidth - 0.5)
-      my.set(e.clientY / window.innerHeight - 0.5)
-    }
-    window.addEventListener('mousemove', onMove)
-    return () => window.removeEventListener('mousemove', onMove)
-  }, [mx, my])
 
   return (
     <section id="hero" className="relative flex min-h-[100svh] items-center overflow-hidden px-5 pt-24 pb-16">
@@ -143,51 +123,8 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* ── Right: floating doodle scene ── */}
-        <div ref={sceneRef} className="relative mx-auto aspect-square w-full max-w-[420px]">
-          {/* dashed orbit ring */}
-          <div className="absolute inset-6 rounded-full border-2 border-dashed border-paper/20" />
-          <div className="absolute inset-16 rounded-full border-2 border-dashed border-saber/25" />
-
-          {/* central planet + astronaut */}
-          <motion.div
-            style={{ x: t2x, y: t2y }}
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-          >
-            <div className="relative">
-              <Planet className="h-40 w-40 text-grape sm:h-48 sm:w-48" style={{ filter: 'drop-shadow(4px 6px 0 rgba(16,18,35,.5))' }} />
-              <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute -right-6 -top-14"
-              >
-                <Astronaut className="h-32 w-32" />
-              </motion.div>
-            </div>
-          </motion.div>
-
-          {/* orbiting doodles with parallax layers */}
-          <motion.div style={{ x: t1x, y: t1y }} className="absolute right-2 top-2 text-gold animate-floaty">
-            <Star5 className="h-10 w-10" />
-          </motion.div>
-          <motion.div style={{ x: t3x, y: t3y }} className="absolute left-0 top-10 text-saber">
-            <motion.div animate={{ rotate: 360 }} transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}>
-              <Sparkle className="h-8 w-8" />
-            </motion.div>
-          </motion.div>
-          <motion.div style={{ x: t1x, y: t1y }} className="absolute -left-2 bottom-10 text-creeper">
-            <Creeper className="h-11 w-11" style={{ filter: 'drop-shadow(3px 3px 0 rgba(16,18,35,.5))' }} />
-          </motion.div>
-          <motion.div style={{ x: t3x, y: t3y }} className="absolute bottom-4 right-6 text-saber">
-            <Lightsaber className="h-12 w-12" />
-          </motion.div>
-          <motion.div style={{ x: t2x, y: t2y }} className="absolute -right-3 top-1/2 text-paper">
-            <Vessel className="h-10 w-10" />
-          </motion.div>
-          <motion.div style={{ x: t1x, y: t1y }} className="absolute left-8 top-0 text-coral">
-            <Comet className="h-9 w-9" />
-          </motion.div>
-        </div>
+        {/* ── Right: the orbit you can grab ── */}
+        <OrbitScene kick={kicks} />
       </div>
 
       {/* GAME START flash */}
